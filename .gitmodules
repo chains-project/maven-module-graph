@@ -1,3 +1,6 @@
 [submodule "src/test/resources/legend-engine/legend-engine"]
 	path = src/test/resources/legend-engine/legend-engine
 	url = git@github.com:finos/legend-engine.git
+[submodule "src/test/resources/neo4j/neo4j"]
+	path = src/test/resources/neo4j/neo4j
+	url = git@github.com:neo4j/neo4j.git

@@ -99,6 +99,10 @@ public class MavenModule {
 
 		List<String> submodules = rootModel.getModules();
 
+		rootModel.getProfiles().forEach(profile -> {
+			submodules.addAll(profile.getModules());
+		});
+
 		for (String module : submodules) {
 			Path modulePath = projectRoot.resolve(module);
 			MavenXpp3Reader moduleReader = new MavenXpp3Reader();
@@ -107,6 +111,9 @@ public class MavenModule {
 			MavenModule mavenModule = new MavenModule(moduleModel, modulePath, root);
 			if (moduleModel.getModules() != null) {
 				List<String> childModules = moduleModel.getModules();
+				moduleModel.getProfiles().forEach(profile -> {
+					childModules.addAll(profile.getModules());
+				});
 				List<MavenModule> children = childModules.stream()
 						.map(childModule -> {
 							try {

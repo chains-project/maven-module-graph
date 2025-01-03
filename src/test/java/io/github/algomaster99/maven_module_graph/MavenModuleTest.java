@@ -30,7 +30,27 @@ public class MavenModuleTest {
 		// assert
 		assertThat(Files.readString(expectedPlainText), equalTo(Files.readString(actualPlainText)));
 		assertThat(Files.readString(expectedJson), equalTo(Files.readString(actualJson)));
-
-
 	}
+
+	@Test
+	void neo4j(@TempDir Path temp) throws XmlPullParserException, IOException {
+		// arrange
+		MavenModule module = MavenModule.createMavenModuleGraph(Path.of("src/test/resources/neo4j/neo4j"), null);
+		Path expectedPlainText = Path.of("src/test/resources/neo4j/output.txt");
+		Path actualPlainText = temp.resolve("neo4j.txt");
+
+		Path expectedJson = Path.of("src/test/resources/neo4j/output.json");
+		Path actualJson = temp.resolve("neo4j.json");
+
+		// act
+		Utility.printToFile(module, actualPlainText, 2);
+		Utility.printToJson(module, actualJson, 0);
+
+		// assert
+		// wc gives 124 as output because it does not count the last line without \n
+		assertThat(Files.readAllLines(expectedPlainText).size(), equalTo(125));
+		assertThat(Files.readString(expectedPlainText), equalTo(Files.readString(actualPlainText)));
+		assertThat(Files.readString(expectedJson), equalTo(Files.readString(actualJson)));
+	}
+
 }
