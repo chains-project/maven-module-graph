@@ -19,7 +19,7 @@ Let's try current solutions on [handlebars.java v4.2.1](https://github.com/jknac
 mvn -Dexec.executable='echo' -Dexec.args='${project.artifactId}' exec:exec -q
 ```
 
-> TLDR: 1) maven based solutions are too slow
+> TLDR: 1) maven based solutions are too slow 2) build must pass
 
 Output:
 
@@ -50,7 +50,9 @@ sys 1.06
 find -name pom.xml | grep -v target | sort
 ```
 
-Great to count number of modules, but won't give GAV coordinates.
+1. Great to count number of modules, but won't give GAV coordinates.
+2. Is prone to error since some `pom.xml` may not be part of reactor. Eg, [spoon](https://github.com/INRIA/spoon) has many modules
+  but they are not submodules.
 
 Others did not work for me :) Please correct me if I am wrong.
 
