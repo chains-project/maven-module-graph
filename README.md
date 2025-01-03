@@ -7,9 +7,7 @@ This metric helps to assess the complexity of the projects selected for study.
 Googling "how to count maven module maven project" resulted in the following 
 StackOverflow post:
 
-<div style="text-align: center; font-style: italic">
-<a href="https://stackoverflow.com/questions/3662291/how-to-list-active-sub-modules-in-a-maven-project">How to list active sub-modules in a Maven project?</a>
-</div>
+#### [How to list active sub-modules in a Maven project?](https://stackoverflow.com/questions/3662291/how-to-list-active-sub-modules-in-a-maven-project)
 
 However, none of the solutions provided in the post worked for me well.
 
