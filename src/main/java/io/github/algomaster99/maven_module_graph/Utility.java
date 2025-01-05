@@ -10,7 +10,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Utility {
 	private Utility() {
@@ -98,15 +101,28 @@ public class Utility {
 
 	private static String getVersion(MavenModule module) {
 		String version = module.getSelf().getVersion();
+		Map<Object, Object> properties = MavenModule.getProperties();
 		if (version == null) {
 			if (module.getSelf().getParent() != null) {
-				return module.getSelf().getParent().getVersion();
+				return parseProperty(module.getSelf().getParent().getVersion(), properties);
 			}
 			if (module.getSelf().getParent() != null) {
-				return getVersion(module.getParent());
+				return parseProperty(getVersion(module.getParent()), properties);
 			}
 		}
-		return version;
+		return parseProperty(version, properties);
+	}
+
+	private static String parseProperty(String value, Map<Object, Object> properties) {
+		final String regex = "(?<=\\$\\{)[\\w\\d\\.]+(?=\\})";
+
+		final Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+		final Matcher matcher = pattern.matcher(value);
+
+		while (matcher.find()) {
+			return (String) properties.get(matcher.group(0));
+		}
+		return value;
 	}
 
 

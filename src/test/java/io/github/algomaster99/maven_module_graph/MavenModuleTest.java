@@ -53,4 +53,23 @@ public class MavenModuleTest {
 		assertThat(Files.readString(expectedJson), equalTo(Files.readString(actualJson)));
 	}
 
+	@Test
+	void arthas_mavenProperties(@TempDir Path temp) throws XmlPullParserException, IOException {
+		// arrange
+		MavenModule module = MavenModule.createMavenModuleGraph(Path.of("src/test/resources/arthas/arthas"), null);
+		Path expectedPlainText = Path.of("src/test/resources/arthas/output.txt");
+		Path actualPlainText = temp.resolve("arthas.txt");
+
+		Path expectedJson = Path.of("src/test/resources/arthas/output.json");
+		Path actualJson = temp.resolve("arthas.json");
+
+		// act
+		Utility.printToFile(module, actualPlainText, 2);
+		Utility.printToJson(module, actualJson, 0);
+
+		// assert
+		assertThat(Files.readString(expectedPlainText), equalTo(Files.readString(actualPlainText)));
+		assertThat(Files.readString(expectedJson), equalTo(Files.readString(actualJson)));
+	}
+
 }

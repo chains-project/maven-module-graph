@@ -10,10 +10,10 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
-import java.util.Set;
 
 public class MavenModule {
 	private final MavenModule parent;
@@ -24,10 +24,16 @@ public class MavenModule {
 
 	private final List<MavenModule> submodules = new ArrayList<>();
 
+	private static final Map<Object, Object> properties = new HashMap<>();
+
 	private MavenModule(Model self, Path fileSystemPath, MavenModule parent) {
 		this.self = self;
 		this.fileSystemPath = fileSystemPath;
 		this.parent = parent;
+	}
+
+	public static Map<Object, Object> getProperties() {
+		return properties;
 	}
 
 	public void addSubmodule(MavenModule child) {
@@ -94,6 +100,8 @@ public class MavenModule {
 		Path rootPom = projectRoot.resolve("pom.xml");
 		MavenXpp3Reader reader = new MavenXpp3Reader();
 		Model rootModel = reader.read(new FileReader(rootPom.toFile()));
+
+		properties.putAll(rootModel.getProperties());
 
 		MavenModule root = new MavenModule(rootModel, projectRoot.toAbsolutePath(), parent);
 
