@@ -47,7 +47,6 @@ public class MavenModuleTest {
 		Utility.printToJson(module, actualJson, 0);
 
 		// assert
-		// wc gives 124 as output because it does not count the last line without \n
 		assertThat(Files.readAllLines(expectedPlainText).size(), equalTo(125));
 		assertThat(Files.readString(expectedPlainText), equalTo(Files.readString(actualPlainText)));
 		assertThat(Files.readString(expectedJson), equalTo(Files.readString(actualJson)));
