@@ -4,3 +4,6 @@
 [submodule "src/test/resources/neo4j/neo4j"]
 	path = src/test/resources/neo4j/neo4j
 	url = git@github.com:neo4j/neo4j.git
+[submodule "src/test/resources/arthas/arthas"]
+	path = src/test/resources/arthas/arthas
+	url = git@github.com:alibaba/arthas.git
