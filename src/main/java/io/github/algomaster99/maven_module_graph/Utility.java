@@ -42,7 +42,7 @@ public class Utility {
 
 		// Write to file
 		try {
-			Files.writeString(plainText, sb.toString().trim());
+			Files.writeString(plainText, sb.toString());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
