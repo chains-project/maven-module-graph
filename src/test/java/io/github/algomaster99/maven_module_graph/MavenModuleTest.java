@@ -33,7 +33,7 @@ public class MavenModuleTest {
 	}
 
 	@Test
-	void neo4j(@TempDir Path temp) throws XmlPullParserException, IOException {
+	void neo4j_profileModules(@TempDir Path temp) throws XmlPullParserException, IOException {
 		// arrange
 		MavenModule module = MavenModule.createMavenModuleGraph(Path.of("src/test/resources/neo4j/neo4j"), null);
 		Path expectedPlainText = Path.of("src/test/resources/neo4j/output.txt");
