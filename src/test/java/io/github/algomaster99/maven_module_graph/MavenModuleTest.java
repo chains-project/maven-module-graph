@@ -23,7 +23,7 @@ public class MavenModuleTest {
 				"src/test/resources/legend-engine/output.json",
 				temp.resolve("legend-engine.txt"),
 				temp.resolve("legend-engine.json"),
-				2, 2
+				2, 2, false
 		);
 	}
 
@@ -48,7 +48,7 @@ public class MavenModuleTest {
 				"src/test/resources/arthas/output.json",
 				temp.resolve("arthas.txt"),
 				temp.resolve("arthas.json"),
-				2, 0
+				2, 0, false
 		);
 	}
 
@@ -60,7 +60,7 @@ public class MavenModuleTest {
 				"src/test/resources/persistence/output.json",
 				temp.resolve("persistence.txt"),
 				temp.resolve("persistence.json"),
-				0, 2
+				0, 2, false
 		);
 	}
 
@@ -72,7 +72,19 @@ public class MavenModuleTest {
 				"src/test/resources/sling-maven/output.json",
 				temp.resolve("slingfeature-maven-plugin.txt"),
 				temp.resolve("slingfeature-maven-plugin.json"),
-				2, 2
+				2, 2, false
+		);
+	}
+
+	@Test
+	void karaf_oneModuleAbsent(@TempDir Path temp) throws XmlPullParserException, IOException {
+		runTest(
+				"src/test/resources/karaf/karaf",
+				"src/test/resources/karaf/output.txt",
+				"src/test/resources/karaf/output.json",
+				temp.resolve("karaf.txt"),
+				temp.resolve("karaf.json"),
+				0, 0, true
 		);
 	}
 
@@ -83,10 +95,11 @@ public class MavenModuleTest {
 			Path actualTextPath,
 			Path actualJsonPath,
 			int textIndent,
-			int jsonIndent
+			int jsonIndent,
+			boolean excludeProfiles
 	) throws XmlPullParserException, IOException {
 		// arrange
-		MavenModule module = Utility.createMavenModuleGraph(Path.of(modulePath), null, new HashMap<>());
+		MavenModule module = Utility.createMavenModuleGraph(Path.of(modulePath), null, new HashMap<>(), excludeProfiles);
 		Path expectedPlainText = Path.of(expectedTextPath);
 		Path expectedJson = Path.of(expectedJsonPath);
 
@@ -110,7 +123,7 @@ public class MavenModuleTest {
 			int expectedLineCount
 	) throws XmlPullParserException, IOException {
 		// arrange
-		MavenModule module = Utility.createMavenModuleGraph(Path.of(modulePath), null, new HashMap<>());
+		MavenModule module = Utility.createMavenModuleGraph(Path.of(modulePath), null, new HashMap<>(), false);
 		Path expectedPlainText = Path.of(expectedTextPath);
 		Path expectedJson = Path.of(expectedJsonPath);
 

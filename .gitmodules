@@ -13,3 +13,6 @@
 [submodule "src/test/resources/sling-maven/sling-maven"]
 	path = src/test/resources/sling-maven/sling-maven
 	url = git@github.com:apache/sling-slingfeature-maven-plugin.git
+[submodule "src/test/resources/karaf/karaf"]
+	path = src/test/resources/karaf/karaf
+	url = git@github.com:apache/karaf.git

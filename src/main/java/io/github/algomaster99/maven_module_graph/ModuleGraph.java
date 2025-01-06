@@ -26,6 +26,12 @@ public class ModuleGraph implements Callable<Integer> {
 	)
 	private Path project;
 
+	@CommandLine.Option(
+			names = {"--exclude-profiles"},
+			description = "Exclude modules that are part of profiles."
+	)
+	private boolean excludeProfiles;
+
 	@CommandLine.ArgGroup(exclusive = false)
 	private PlainText plainText;
 
@@ -65,7 +71,7 @@ public class ModuleGraph implements Callable<Integer> {
 	@Override
 	public Integer call() throws XmlPullParserException, IOException {
 		validate();
-		MavenModule moduleGraphRoot = Utility.createMavenModuleGraph(project, null, new HashMap<>());
+		MavenModule moduleGraphRoot = Utility.createMavenModuleGraph(project, null, new HashMap<>(), excludeProfiles);
 		if (plainText != null) {
 			printToFile(moduleGraphRoot, plainText.plainText, plainText.indent);
 		}
