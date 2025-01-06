@@ -24,7 +24,7 @@ public class Utility {
 	private Utility() {
 	}
 
-	public static MavenModule createMavenModuleGraph(Path projectRoot, MavenModule parent, Map<Object, Object> properties) throws IOException, XmlPullParserException {
+	public static MavenModule createMavenModuleGraph(Path projectRoot, MavenModule parent, Map<Object, Object> properties, boolean excludeProfiles) throws IOException, XmlPullParserException {
 		Path rootPom = projectRoot.resolve("pom.xml");
 		Model rootModel = readPomModel(rootPom);
 
@@ -36,11 +36,11 @@ public class Utility {
 
 		MavenModule root = new MavenModule(rootModel, rootGroupId, rootArtifactId, rootVersion, properties, projectRoot.toAbsolutePath(), parent);
 
-		List<String> submodules = getAllModules(rootModel);
+		List<String> submodules = getAllModules(rootModel, excludeProfiles);
 
 		for (String module : submodules) {
 			Path modulePath = projectRoot.resolve(module);
-			MavenModule mavenModule = createMavenModuleGraph(modulePath, root, properties);
+			MavenModule mavenModule = createMavenModuleGraph(modulePath, root, properties, excludeProfiles);
 			root.addSubmodule(mavenModule);
 		}
 
@@ -52,8 +52,11 @@ public class Utility {
 		return reader.read(ReaderFactory.newXmlReader(pomPath.toFile()));
 	}
 
-	private static List<String> getAllModules(Model model) {
+	private static List<String> getAllModules(Model model, boolean exludeProfiles) {
 		List<String> modules = new ArrayList<>(model.getModules());
+		if (exludeProfiles) {
+			return modules;
+		}
 		model.getProfiles().forEach(profile -> modules.addAll(profile.getModules()));
 		return modules;
 	}
