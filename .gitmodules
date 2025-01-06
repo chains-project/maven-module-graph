@@ -10,3 +10,6 @@
 [submodule "src/test/resources/persistence/persistence"]
 	path = src/test/resources/persistence/persistence
 	url = git@github.com:jakartaee/persistence.git
+[submodule "src/test/resources/sling-maven/sling-maven"]
+	path = src/test/resources/sling-maven/sling-maven
+	url = git@github.com:apache/sling-slingfeature-maven-plugin.git
