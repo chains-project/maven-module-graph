@@ -1,0 +1,6 @@
+{
+  "depth" : 0,
+  "groupId" : "org.apache.sling",
+  "artifactId" : "slingfeature-maven-plugin",
+  "version" : "1.6.8"
+}
