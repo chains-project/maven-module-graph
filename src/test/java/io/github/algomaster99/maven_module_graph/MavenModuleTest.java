@@ -14,81 +14,101 @@ import static org.hamcrest.Matchers.equalTo;
 
 
 public class MavenModuleTest {
+
 	@Test
 	void legend_engine(@TempDir Path temp) throws XmlPullParserException, IOException {
-		// arrange
-		MavenModule module = Utility.createMavenModuleGraph(Path.of("src/test/resources/legend-engine/legend-engine"), null, new HashMap<>());
-		Path expectedPlainText = Path.of("src/test/resources/legend-engine/output.txt");
-		Path actualPlainText = temp.resolve("legend-engine.txt");
-
-		Path expectedJson = Path.of("src/test/resources/legend-engine/output.json");
-		Path actualJson = temp.resolve("legend-engine.json");
-
-		// act
-		Utility.printToFile(module, actualPlainText, 2);
-		Utility.printToJson(module, actualJson, 2);
-
-		// assert
-		assertThat(Files.readString(expectedPlainText), equalTo(Files.readString(actualPlainText)));
-		assertThat(Files.readString(expectedJson), equalTo(Files.readString(actualJson)));
+		runTest(
+				"src/test/resources/legend-engine/legend-engine",
+				"src/test/resources/legend-engine/output.txt",
+				"src/test/resources/legend-engine/output.json",
+				temp.resolve("legend-engine.txt"),
+				temp.resolve("legend-engine.json"),
+				2, 2
+		);
 	}
 
 	@Test
 	void neo4j_profileModules(@TempDir Path temp) throws XmlPullParserException, IOException {
-		// arrange
-		MavenModule module = Utility.createMavenModuleGraph(Path.of("src/test/resources/neo4j/neo4j"), null, new HashMap<>());
-		Path expectedPlainText = Path.of("src/test/resources/neo4j/output.txt");
-		Path actualPlainText = temp.resolve("neo4j.txt");
-
-		Path expectedJson = Path.of("src/test/resources/neo4j/output.json");
-		Path actualJson = temp.resolve("neo4j.json");
-
-		// act
-		Utility.printToFile(module, actualPlainText, 2);
-		Utility.printToJson(module, actualJson, 0);
-
-		// assert
-		assertThat(Files.readAllLines(expectedPlainText).size(), equalTo(125));
-		assertThat(Files.readString(expectedPlainText), equalTo(Files.readString(actualPlainText)));
-		assertThat(Files.readString(expectedJson), equalTo(Files.readString(actualJson)));
+		runTestWithLineCountCheck(
+				"src/test/resources/neo4j/neo4j",
+				"src/test/resources/neo4j/output.txt",
+				"src/test/resources/neo4j/output.json",
+				temp.resolve("neo4j.txt"),
+				temp.resolve("neo4j.json"),
+				2, 0,
+				125
+		);
 	}
 
 	@Test
 	void arthas_mavenProperties(@TempDir Path temp) throws XmlPullParserException, IOException {
-		// arrange
-		MavenModule module = Utility.createMavenModuleGraph(Path.of("src/test/resources/arthas/arthas"), null, new HashMap<>());
-		Path expectedPlainText = Path.of("src/test/resources/arthas/output.txt");
-		Path actualPlainText = temp.resolve("arthas.txt");
-
-		Path expectedJson = Path.of("src/test/resources/arthas/output.json");
-		Path actualJson = temp.resolve("arthas.json");
-
-		// act
-		Utility.printToFile(module, actualPlainText, 2);
-		Utility.printToJson(module, actualJson, 0);
-
-		// assert
-		assertThat(Files.readString(expectedPlainText), equalTo(Files.readString(actualPlainText)));
-		assertThat(Files.readString(expectedJson), equalTo(Files.readString(actualJson)));
+		runTest(
+				"src/test/resources/arthas/arthas",
+				"src/test/resources/arthas/output.txt",
+				"src/test/resources/arthas/output.json",
+				temp.resolve("arthas.txt"),
+				temp.resolve("arthas.json"),
+				2, 0
+		);
 	}
 
 	@Test
 	void persistence_differentProjectRoot(@TempDir Path temp) throws XmlPullParserException, IOException {
-		// arrange
-		MavenModule module = Utility.createMavenModuleGraph(Path.of("src/test/resources/persistence/persistence/api"), null, new HashMap<>());
-		Path expectedPlainText = Path.of("src/test/resources/persistence/output.txt");
-		Path actualPlainText = temp.resolve("arthas.txt");
-
-		Path expectedJson = Path.of("src/test/resources/persistence/output.json");
-		Path actualJson = temp.resolve("arthas.json");
-
-		// act
-		Utility.printToFile(module, actualPlainText, 0);
-		Utility.printToJson(module, actualJson, 2);
-
-		// assert
-		assertThat(Files.readString(expectedPlainText), equalTo(Files.readString(actualPlainText)));
-		assertThat(Files.readString(expectedJson), equalTo(Files.readString(actualJson)));
+		runTest(
+				"src/test/resources/persistence/persistence/api",
+				"src/test/resources/persistence/output.txt",
+				"src/test/resources/persistence/output.json",
+				temp.resolve("persistence.txt"),
+				temp.resolve("persistence.json"),
+				0, 2
+		);
 	}
 
+	private void runTest(
+			String modulePath,
+			String expectedTextPath,
+			String expectedJsonPath,
+			Path actualTextPath,
+			Path actualJsonPath,
+			int textIndent,
+			int jsonIndent
+	) throws XmlPullParserException, IOException {
+		// arrange
+		MavenModule module = Utility.createMavenModuleGraph(Path.of(modulePath), null, new HashMap<>());
+		Path expectedPlainText = Path.of(expectedTextPath);
+		Path expectedJson = Path.of(expectedJsonPath);
+
+		// act
+		Utility.printToFile(module, actualTextPath, textIndent);
+		Utility.printToJson(module, actualJsonPath, jsonIndent);
+
+		// assert
+		assertThat(Files.readString(expectedPlainText), equalTo(Files.readString(actualTextPath)));
+		assertThat(Files.readString(expectedJson), equalTo(Files.readString(actualJsonPath)));
+	}
+
+	private void runTestWithLineCountCheck(
+			String modulePath,
+			String expectedTextPath,
+			String expectedJsonPath,
+			Path actualTextPath,
+			Path actualJsonPath,
+			int textIndent,
+			int jsonIndent,
+			int expectedLineCount
+	) throws XmlPullParserException, IOException {
+		// arrange
+		MavenModule module = Utility.createMavenModuleGraph(Path.of(modulePath), null, new HashMap<>());
+		Path expectedPlainText = Path.of(expectedTextPath);
+		Path expectedJson = Path.of(expectedJsonPath);
+
+		// act
+		Utility.printToFile(module, actualTextPath, textIndent);
+		Utility.printToJson(module, actualJsonPath, jsonIndent);
+
+		// assert
+		assertThat(Files.readAllLines(expectedPlainText).size(), equalTo(expectedLineCount));
+		assertThat(Files.readString(expectedPlainText), equalTo(Files.readString(actualTextPath)));
+		assertThat(Files.readString(expectedJson), equalTo(Files.readString(actualJsonPath)));
+	}
 }
