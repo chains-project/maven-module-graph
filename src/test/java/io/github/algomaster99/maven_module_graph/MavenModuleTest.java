@@ -7,6 +7,7 @@ import org.junit.jupiter.api.io.TempDir;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -16,7 +17,7 @@ public class MavenModuleTest {
 	@Test
 	void legend_engine(@TempDir Path temp) throws XmlPullParserException, IOException {
 		// arrange
-		MavenModule module = MavenModule.createMavenModuleGraph(Path.of("src/test/resources/legend-engine/legend-engine"), null);
+		MavenModule module = Utility.createMavenModuleGraph(Path.of("src/test/resources/legend-engine/legend-engine"), null, new HashMap<>());
 		Path expectedPlainText = Path.of("src/test/resources/legend-engine/output.txt");
 		Path actualPlainText = temp.resolve("legend-engine.txt");
 
@@ -25,7 +26,7 @@ public class MavenModuleTest {
 
 		// act
 		Utility.printToFile(module, actualPlainText, 2);
-		Utility.printToJson(module, actualJson, 0);
+		Utility.printToJson(module, actualJson, 2);
 
 		// assert
 		assertThat(Files.readString(expectedPlainText), equalTo(Files.readString(actualPlainText)));
@@ -35,7 +36,7 @@ public class MavenModuleTest {
 	@Test
 	void neo4j_profileModules(@TempDir Path temp) throws XmlPullParserException, IOException {
 		// arrange
-		MavenModule module = MavenModule.createMavenModuleGraph(Path.of("src/test/resources/neo4j/neo4j"), null);
+		MavenModule module = Utility.createMavenModuleGraph(Path.of("src/test/resources/neo4j/neo4j"), null, new HashMap<>());
 		Path expectedPlainText = Path.of("src/test/resources/neo4j/output.txt");
 		Path actualPlainText = temp.resolve("neo4j.txt");
 
@@ -55,7 +56,7 @@ public class MavenModuleTest {
 	@Test
 	void arthas_mavenProperties(@TempDir Path temp) throws XmlPullParserException, IOException {
 		// arrange
-		MavenModule module = MavenModule.createMavenModuleGraph(Path.of("src/test/resources/arthas/arthas"), null);
+		MavenModule module = Utility.createMavenModuleGraph(Path.of("src/test/resources/arthas/arthas"), null, new HashMap<>());
 		Path expectedPlainText = Path.of("src/test/resources/arthas/output.txt");
 		Path actualPlainText = temp.resolve("arthas.txt");
 

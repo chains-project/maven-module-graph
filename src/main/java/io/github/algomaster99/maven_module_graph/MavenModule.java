@@ -1,38 +1,40 @@
 package io.github.algomaster99.maven_module_graph;
 
-import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
-import java.io.FileReader;
-import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 
 public class MavenModule {
 	private final MavenModule parent;
 
-	private final Model self;
+	private final Model actualModel;
+
+	private final String groupId;
+
+	private final String artifactId;
+
+	private final String version;
 
 	private final Path fileSystemPath;
 
 	private final List<MavenModule> submodules = new ArrayList<>();
 
-	private static final Map<Object, Object> properties = new HashMap<>();
+	private final Map<Object, Object> properties = new HashMap<>();
 
-	private MavenModule(Model self, Path fileSystemPath, MavenModule parent) {
-		this.self = self;
+	 public MavenModule(Model actualModel, String groupId, String artifactId, String version, Map<Object, Object> properties, Path fileSystemPath, MavenModule parent) {
+		this.actualModel = actualModel;
+		this.groupId = groupId;
+		this.artifactId = artifactId;
+		this.version = version;
+		this.properties.putAll(properties);
 		this.fileSystemPath = fileSystemPath;
 		this.parent = parent;
 	}
 
-	public static Map<Object, Object> getProperties() {
+	public Map<Object, Object> getProperties() {
 		return properties;
 	}
 
@@ -40,8 +42,8 @@ public class MavenModule {
 		submodules.add(child);
 	}
 
-	public Model getSelf() {
-		return self;
+	public Model getActualModel() {
+		return actualModel;
 	}
 
 	public List<MavenModule> getSubmodules() {
@@ -54,19 +56,6 @@ public class MavenModule {
 
 	public MavenModule getParent() {
 		return parent;
-	}
-
-	public MavenModule findSubmodule(String artifactIdOfModule) {
-		Queue<MavenModule> queue = new ArrayDeque<>();
-		queue.add(topLevelParent());
-		while (!queue.isEmpty()) {
-			MavenModule module = queue.poll();
-			if (module.getSelf().getArtifactId().equals(artifactIdOfModule)) {
-				return module;
-			}
-			queue.addAll(module.getSubmodules());
-		}
-		return null;
 	}
 
 	public MavenModule topLevelParent() {
@@ -88,53 +77,23 @@ public class MavenModule {
 			return false;
 		}
 		MavenModule that = (MavenModule) obj;
-		return self.equals(that.self);
+		return actualModel.equals(that.actualModel);
 	}
 
 	@Override
 	public int hashCode() {
-		return self.hashCode();
+		return actualModel.hashCode();
 	}
 
-	public static MavenModule createMavenModuleGraph(Path projectRoot, MavenModule parent) throws IOException, XmlPullParserException {
-		Path rootPom = projectRoot.resolve("pom.xml");
-		MavenXpp3Reader reader = new MavenXpp3Reader();
-		Model rootModel = reader.read(new FileReader(rootPom.toFile()));
+	public String getGroupId() {
+		return groupId;
+	}
 
-		properties.putAll(rootModel.getProperties());
+	public String getArtifactId() {
+		return artifactId;
+	}
 
-		MavenModule root = new MavenModule(rootModel, projectRoot.toAbsolutePath(), parent);
-
-		List<String> submodules = rootModel.getModules();
-
-		rootModel.getProfiles().forEach(profile -> {
-			submodules.addAll(profile.getModules());
-		});
-
-		for (String module : submodules) {
-			Path modulePath = projectRoot.resolve(module);
-			MavenXpp3Reader moduleReader = new MavenXpp3Reader();
-			Model moduleModel = moduleReader.read(
-					new FileReader(modulePath.resolve("pom.xml").toFile()));
-			MavenModule mavenModule = new MavenModule(moduleModel, modulePath, root);
-			if (moduleModel.getModules() != null) {
-				List<String> childModules = moduleModel.getModules();
-				moduleModel.getProfiles().forEach(profile -> {
-					childModules.addAll(profile.getModules());
-				});
-				List<MavenModule> children = childModules.stream()
-						.map(childModule -> {
-							try {
-								return createMavenModuleGraph(modulePath.resolve(childModule), mavenModule);
-							} catch (IOException | XmlPullParserException e) {
-								throw new RuntimeException(e);
-							}
-						})
-						.toList();
-				children.forEach(mavenModule::addSubmodule);
-			}
-			root.addSubmodule(mavenModule);
-		}
-		return root;
+	public String getVersion() {
+		return version;
 	}
 }
