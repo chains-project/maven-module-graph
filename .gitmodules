@@ -7,3 +7,6 @@
 [submodule "src/test/resources/arthas/arthas"]
 	path = src/test/resources/arthas/arthas
 	url = git@github.com:alibaba/arthas.git
+[submodule "src/test/resources/persistence/persistence"]
+	path = src/test/resources/persistence/persistence
+	url = git@github.com:jakartaee/persistence.git
