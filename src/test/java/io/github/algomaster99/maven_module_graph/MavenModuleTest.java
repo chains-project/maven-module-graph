@@ -76,10 +76,10 @@ public class MavenModuleTest {
 	void persistence_differentProjectRoot(@TempDir Path temp) throws XmlPullParserException, IOException {
 		// arrange
 		MavenModule module = Utility.createMavenModuleGraph(Path.of("src/test/resources/persistence/persistence/api"), null, new HashMap<>());
-		Path expectedPlainText = Path.of("src/test/resources/arthas/output.txt");
+		Path expectedPlainText = Path.of("src/test/resources/persistence/output.txt");
 		Path actualPlainText = temp.resolve("arthas.txt");
 
-		Path expectedJson = Path.of("src/test/resources/arthas/output.json");
+		Path expectedJson = Path.of("src/test/resources/persistence/output.json");
 		Path actualJson = temp.resolve("arthas.json");
 
 		// act
