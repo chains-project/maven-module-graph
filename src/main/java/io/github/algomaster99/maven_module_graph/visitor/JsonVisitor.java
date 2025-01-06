@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.github.algomaster99.maven_module_graph.MavenModule;
-import io.github.algomaster99.maven_module_graph.MavenModuleVisitor;
 
 import java.io.IOException;
 import java.nio.file.Files;

@@ -1,7 +1,6 @@
 package io.github.algomaster99.maven_module_graph.visitor;
 
 import io.github.algomaster99.maven_module_graph.MavenModule;
-import io.github.algomaster99.maven_module_graph.MavenModuleVisitor;
 import io.github.algomaster99.maven_module_graph.Pair;
 
 import java.util.List;
