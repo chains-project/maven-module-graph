@@ -5,6 +5,7 @@ import picocli.CommandLine;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.concurrent.Callable;
 
 import static io.github.algomaster99.maven_module_graph.Utility.printToFile;
@@ -64,7 +65,7 @@ public class ModuleGraph implements Callable<Integer> {
 	@Override
 	public Integer call() throws XmlPullParserException, IOException {
 		validate();
-		MavenModule moduleGraphRoot = MavenModule.createMavenModuleGraph(project, null);
+		MavenModule moduleGraphRoot = Utility.createMavenModuleGraph(project, null, new HashMap<>());
 		if (plainText != null) {
 			printToFile(moduleGraphRoot, plainText.plainText, plainText.indent);
 		}
