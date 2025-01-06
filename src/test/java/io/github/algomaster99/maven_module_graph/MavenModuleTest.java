@@ -67,7 +67,7 @@ public class MavenModuleTest {
 	@Test
 	void slingfeature_maven_plugin_differentPomEncoding(@TempDir Path temp) throws XmlPullParserException, IOException {
 		runTest(
-				"src/test/resources/sling-maven/slingfeature-maven",
+				"src/test/resources/sling-maven/sling-maven",
 				"src/test/resources/sling-maven/output.txt",
 				"src/test/resources/sling-maven/output.json",
 				temp.resolve("slingfeature-maven-plugin.txt"),
