@@ -1,8 +1,10 @@
 package io.github.algomaster99.maven_module_graph;
 
-import io.github.algomaster99.maven_module_graph.visitor.JsonVisitor;
-import io.github.algomaster99.maven_module_graph.visitor.MavenModuleProcessor;
-import io.github.algomaster99.maven_module_graph.visitor.PlainTextVisitor;
+import com.fasterxml.jackson.core.util.DefaultIndenter;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -14,6 +16,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,25 +58,72 @@ public class Utility {
 		return modules;
 	}
 
-	public static void printToFile(MavenModule root, Path plainText, int indent) {
-		PlainTextVisitor plainTextVisitor = new PlainTextVisitor(indent);
-		MavenModuleProcessor.process(root, plainTextVisitor);
 
+	public static void printToFile(MavenModule root, Path plainText, int indent) {
+		StringBuilder sb = new StringBuilder();
+		Stack<Pair<Integer, MavenModule>> levelToModule = new Stack<>();
+		levelToModule.add(Pair.of(0, root));
+
+		String indentString = " ".repeat(indent);
+
+		while (!levelToModule.isEmpty()) {
+			Pair<Integer, MavenModule> current = levelToModule.pop();
+			int level = current.first();
+			sb.append(indentString.repeat(level));
+
+			MavenModule currentModule = current.second();
+			sb.append(String.format("%s:%s:%s", currentModule.getGroupId(), currentModule.getArtifactId(), currentModule.getVersion()));
+			List<MavenModule> children = currentModule.getSubmodules();
+			for (MavenModule child : children) {
+				levelToModule.add(Pair.of(level + 1, child));
+			}
+			sb.append("\n");
+		}
+
+		// Write to file
 		try {
-			Files.writeString(plainText, plainTextVisitor.getResult());
+			Files.writeString(plainText, sb.toString());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
 	public static void printToJson(MavenModule root, Path jsonPath, int indent) {
-		JsonVisitor jsonVisitor = new JsonVisitor(indent);
-		MavenModuleProcessor.process(root, jsonVisitor);
+		ObjectMapper mapper = new ObjectMapper();
+		ObjectNode rootNode = convertToJson(mapper, root, 0);
+
 		try {
-			jsonVisitor.writeToFile(jsonPath);
+			if (indent > 0) {
+				DefaultPrettyPrinter.Indenter indenter = new DefaultIndenter(" ".repeat(indent), DefaultIndenter.SYS_LF);
+				DefaultPrettyPrinter printer = new DefaultPrettyPrinter();
+				printer.indentObjectsWith(indenter);
+				printer.indentArraysWith(indenter);
+				Files.writeString(jsonPath, mapper.writer(printer).writeValueAsString(rootNode));
+			} else {
+				Files.writeString(jsonPath, mapper.writeValueAsString(rootNode));
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private static ObjectNode convertToJson(ObjectMapper mapper, MavenModule module, int depth) {
+		ObjectNode jsonNode = mapper.createObjectNode();
+		jsonNode.put("depth", depth);
+		jsonNode.put("groupId", module.getGroupId());
+		jsonNode.put("artifactId", module.getArtifactId());
+		jsonNode.put("version", module.getVersion());
+
+		// Add children with incremented depth
+		List<MavenModule> submodules = module.getSubmodules();
+		if (!submodules.isEmpty()) {
+			ArrayNode childrenArray = jsonNode.putArray("submodules");
+			for (MavenModule child : submodules) {
+				childrenArray.add(convertToJson(mapper, child, depth + 1));
+			}
+		}
+
+		return jsonNode;
 	}
 
 	private static String getGroupId(Model module) {
