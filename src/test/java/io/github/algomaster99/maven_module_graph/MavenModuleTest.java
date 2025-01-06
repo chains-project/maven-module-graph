@@ -72,4 +72,23 @@ public class MavenModuleTest {
 		assertThat(Files.readString(expectedJson), equalTo(Files.readString(actualJson)));
 	}
 
+	@Test
+	void persistence_differentProjectRoot(@TempDir Path temp) throws XmlPullParserException, IOException {
+		// arrange
+		MavenModule module = Utility.createMavenModuleGraph(Path.of("src/test/resources/persistence/persistence/api"), null, new HashMap<>());
+		Path expectedPlainText = Path.of("src/test/resources/arthas/output.txt");
+		Path actualPlainText = temp.resolve("arthas.txt");
+
+		Path expectedJson = Path.of("src/test/resources/arthas/output.json");
+		Path actualJson = temp.resolve("arthas.json");
+
+		// act
+		Utility.printToFile(module, actualPlainText, 0);
+		Utility.printToJson(module, actualJson, 2);
+
+		// assert
+		assertThat(Files.readString(expectedPlainText), equalTo(Files.readString(actualPlainText)));
+		assertThat(Files.readString(expectedJson), equalTo(Files.readString(actualJson)));
+	}
+
 }

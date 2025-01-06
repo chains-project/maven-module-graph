@@ -1,0 +1,6 @@
+{
+  "depth" : 0,
+  "groupId" : "jakarta.persistence",
+  "artifactId" : "jakarta.persistence-api",
+  "version" : "4.0.0-SNAPSHOT"
+}
