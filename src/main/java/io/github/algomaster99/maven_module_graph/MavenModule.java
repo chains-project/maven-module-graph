@@ -12,11 +12,11 @@ public class MavenModule {
 
 	private final Model actualModel;
 
-	private final String groupId;
+	String groupId;
 
 	private final String artifactId;
 
-	private final String version;
+	String version;
 
 	private final Path fileSystemPath;
 
@@ -32,6 +32,16 @@ public class MavenModule {
 		this.properties.putAll(properties);
 		this.fileSystemPath = fileSystemPath;
 		this.parent = parent;
+	}
+
+	public boolean updateParentProperties(Map<Object, Object> properties) {
+		if (parent != null) {
+			Map<Object, Object> initialParentProperties = new HashMap<>(parent.getProperties());
+			parent.properties.putAll(properties);
+			return !initialParentProperties.equals(parent.getProperties());
+		}
+		return false;
+
 	}
 
 	public Map<Object, Object> getProperties() {

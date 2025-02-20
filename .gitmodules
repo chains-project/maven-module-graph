@@ -16,3 +16,6 @@
 [submodule "src/test/resources/karaf/karaf"]
 	path = src/test/resources/karaf/karaf
 	url = git@github.com:apache/karaf.git
+[submodule "src/test/resources/bnd/bnd"]
+	path = src/test/resources/bnd/bnd
+	url = git@github.com:bndtools/bnd.git

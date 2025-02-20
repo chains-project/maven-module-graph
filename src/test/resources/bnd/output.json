@@ -1,0 +1,62 @@
+{
+  "depth" : 0,
+  "groupId" : "biz.aQute.bnd",
+  "artifactId" : "maven",
+  "version" : "6.3.0",
+  "submodules" : [
+    {
+      "depth" : 1,
+      "groupId" : "biz.aQute.bnd",
+      "artifactId" : "bnd-plugin-parent",
+      "version" : "6.3.0"
+    },
+    {
+      "depth" : 1,
+      "groupId" : "biz.aQute.bnd",
+      "artifactId" : "bnd-maven-plugin",
+      "version" : "6.3.0"
+    },
+    {
+      "depth" : 1,
+      "groupId" : "biz.aQute.bnd",
+      "artifactId" : "bnd-indexer-maven-plugin",
+      "version" : "6.3.0"
+    },
+    {
+      "depth" : 1,
+      "groupId" : "biz.aQute.bnd",
+      "artifactId" : "bnd-baseline-maven-plugin",
+      "version" : "6.3.0"
+    },
+    {
+      "depth" : 1,
+      "groupId" : "biz.aQute.bnd",
+      "artifactId" : "bnd-export-maven-plugin",
+      "version" : "6.3.0"
+    },
+    {
+      "depth" : 1,
+      "groupId" : "biz.aQute.bnd",
+      "artifactId" : "bnd-testing-maven-plugin",
+      "version" : "6.3.0"
+    },
+    {
+      "depth" : 1,
+      "groupId" : "biz.aQute.bnd",
+      "artifactId" : "bnd-resolver-maven-plugin",
+      "version" : "6.3.0"
+    },
+    {
+      "depth" : 1,
+      "groupId" : "biz.aQute.bnd",
+      "artifactId" : "bnd-run-maven-plugin",
+      "version" : "6.3.0"
+    },
+    {
+      "depth" : 1,
+      "groupId" : "biz.aQute.bnd",
+      "artifactId" : "bnd-reporter-maven-plugin",
+      "version" : "6.3.0"
+    }
+  ]
+}
