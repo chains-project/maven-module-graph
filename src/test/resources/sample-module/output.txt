@@ -1,0 +1,3 @@
+org.example:root:1.0.0-SNAPSHOT
+  org.example:a:1.0.0-SNAPSHOT
+    org.example:b:1.0.0-SNAPSHOT

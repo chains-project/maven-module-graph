@@ -68,6 +68,12 @@ public class ModuleGraph implements Callable<Integer> {
 		private int indent = 2;
 	}
 
+	@CommandLine.Option(
+			names = "--fs-path",
+			description = "Embed file system path in the output."
+	)
+	private boolean fsPath = false;
+
 	@Override
 	public Integer call() throws XmlPullParserException, IOException {
 		validate();
@@ -76,7 +82,7 @@ public class ModuleGraph implements Callable<Integer> {
 			printToFile(moduleGraphRoot, plainText.plainText, plainText.indent);
 		}
 		if (json != null) {
-			printToJson(moduleGraphRoot, json.json, json.indent);
+			printToJson(moduleGraphRoot, json.json, json.indent, fsPath);
 		}
 		return 0;
 	}

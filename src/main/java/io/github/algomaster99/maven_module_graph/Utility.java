@@ -102,9 +102,9 @@ public class Utility {
 		}
 	}
 
-	public static void printToJson(MavenModule root, Path jsonPath, int indent) {
+	public static void printToJson(MavenModule root, Path jsonPath, int indent, boolean fsPath) {
 		ObjectMapper mapper = new ObjectMapper();
-		ObjectNode rootNode = convertToJson(mapper, root, 0);
+		ObjectNode rootNode = convertToJson(mapper, root, 0, fsPath);
 
 		try {
 			if (indent > 0) {
@@ -121,19 +121,22 @@ public class Utility {
 		}
 	}
 
-	private static ObjectNode convertToJson(ObjectMapper mapper, MavenModule module, int depth) {
+	private static ObjectNode convertToJson(ObjectMapper mapper, MavenModule module, int depth, boolean fsPath) {
 		ObjectNode jsonNode = mapper.createObjectNode();
 		jsonNode.put("depth", depth);
 		jsonNode.put("groupId", module.getGroupId());
 		jsonNode.put("artifactId", module.getArtifactId());
 		jsonNode.put("version", module.getVersion());
+		if (fsPath) {
+			jsonNode.put("fsPath", Path.of(System.getProperty("user.dir")).relativize(module.getFileSystemPath()).toString());
+		}
 
 		// Add children with incremented depth
 		List<MavenModule> submodules = module.getSubmodules();
 		if (!submodules.isEmpty()) {
 			ArrayNode childrenArray = jsonNode.putArray("submodules");
 			for (MavenModule child : submodules) {
-				childrenArray.add(convertToJson(mapper, child, depth + 1));
+				childrenArray.add(convertToJson(mapper, child, depth + 1, fsPath));
 			}
 		}
 

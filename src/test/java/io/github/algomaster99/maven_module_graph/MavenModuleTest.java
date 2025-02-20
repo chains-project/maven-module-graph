@@ -100,6 +100,42 @@ public class MavenModuleTest {
 		);
 	}
 
+	@Test
+	void sampleModule_embedFsPath(@TempDir Path temp) throws XmlPullParserException, IOException {
+		runTest(
+				"src/test/resources/sample-module/sample-module",
+				"src/test/resources/sample-module/output.txt",
+				"src/test/resources/sample-module/output.json",
+				temp.resolve("sample-module.txt"),
+				temp.resolve("sample-module.json"),
+				2, 2, false, true
+		);
+	}
+
+	private void runTest(
+			String modulePath,
+			String expectedTextPath,
+			String expectedJsonPath,
+			Path actualTextPath,
+			Path actualJsonPath,
+			int textIndent,
+			int jsonIndent,
+			boolean excludeProfiles,
+			boolean fsPath) throws XmlPullParserException, IOException {
+		// arrange
+		MavenModule module = Utility.createMavenModuleGraph(Path.of(modulePath), null, new HashMap<>(), excludeProfiles);
+		Path expectedPlainText = Path.of(expectedTextPath);
+		Path expectedJson = Path.of(expectedJsonPath);
+
+		// act
+		Utility.printToFile(module, actualTextPath, textIndent);
+		Utility.printToJson(module, actualJsonPath, jsonIndent, fsPath);
+
+		// assert
+		assertThat(Files.readString(expectedPlainText), equalTo(Files.readString(actualTextPath)));
+		assertThat(Files.readString(expectedJson), equalTo(Files.readString(actualJsonPath)));
+	}
+
 	private void runTest(
 			String modulePath,
 			String expectedTextPath,
@@ -117,7 +153,7 @@ public class MavenModuleTest {
 
 		// act
 		Utility.printToFile(module, actualTextPath, textIndent);
-		Utility.printToJson(module, actualJsonPath, jsonIndent);
+		Utility.printToJson(module, actualJsonPath, jsonIndent, false);
 
 		// assert
 		assertThat(Files.readString(expectedPlainText), equalTo(Files.readString(actualTextPath)));
@@ -141,7 +177,7 @@ public class MavenModuleTest {
 
 		// act
 		Utility.printToFile(module, actualTextPath, textIndent);
-		Utility.printToJson(module, actualJsonPath, jsonIndent);
+		Utility.printToJson(module, actualJsonPath, jsonIndent, false);
 
 		// assert
 		assertThat(Files.readAllLines(expectedPlainText).size(), equalTo(expectedLineCount));
