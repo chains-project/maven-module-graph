@@ -1,0 +1,25 @@
+{
+  "depth" : 0,
+  "groupId" : "org.example",
+  "artifactId" : "root",
+  "version" : "1.0.0-SNAPSHOT",
+  "fsPath" : "src/test/resources/sample-module/sample-module",
+  "submodules" : [
+    {
+      "depth" : 1,
+      "groupId" : "org.example",
+      "artifactId" : "a",
+      "version" : "1.0.0-SNAPSHOT",
+      "fsPath" : "src/test/resources/sample-module/sample-module/a",
+      "submodules" : [
+        {
+          "depth" : 2,
+          "groupId" : "org.example",
+          "artifactId" : "b",
+          "version" : "1.0.0-SNAPSHOT",
+          "fsPath" : "src/test/resources/sample-module/sample-module/a/b"
+        }
+      ]
+    }
+  ]
+}
