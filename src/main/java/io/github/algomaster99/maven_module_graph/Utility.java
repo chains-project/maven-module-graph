@@ -35,6 +35,7 @@ public class Utility {
 		String rootVersion = parseProperty(getVersion(rootModel), properties);
 
 		MavenModule root = new MavenModule(rootModel, rootGroupId, rootArtifactId, rootVersion, properties, projectRoot.toAbsolutePath(), parent);
+		traverseUpAndUpdateProperties(root);
 
 		List<String> submodules = getAllModules(rootModel, excludeProfiles);
 
@@ -45,6 +46,16 @@ public class Utility {
 		}
 
 		return root;
+	}
+
+	private static void traverseUpAndUpdateProperties(MavenModule root) {
+		if (root.updateParentProperties(root.getProperties())) {
+			// only these two properties can be inherited and hence need to be updated
+			MavenModule parent = root.getParent();
+			parent.groupId = parseProperty(parent.groupId, root.getProperties());
+			parent.version = parseProperty(parent.version, root.getProperties());
+			traverseUpAndUpdateProperties(root.getParent());
+		}
 	}
 
 	private static Model readPomModel(Path pomPath) throws IOException, XmlPullParserException {
@@ -156,7 +167,7 @@ public class Utility {
 		final Matcher matcher = pattern.matcher(value);
 
 		while (matcher.find()) {
-			return (String) properties.get(matcher.group(0));
+			return properties.get(matcher.group(0)) != null ? (String) properties.get(matcher.group(0)) : value;
 		}
 		return value;
 	}

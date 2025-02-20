@@ -88,6 +88,18 @@ public class MavenModuleTest {
 		);
 	}
 
+	@Test
+	void bnd_rootVersionIsNull(@TempDir Path temp) throws XmlPullParserException, IOException {
+		runTest(
+				"src/test/resources/bnd/bnd/maven",
+				"src/test/resources/bnd/output.txt",
+				"src/test/resources/bnd/output.json",
+				temp.resolve("bnd.txt"),
+				temp.resolve("bnd.json"),
+				2, 2, true
+		);
+	}
+
 	private void runTest(
 			String modulePath,
 			String expectedTextPath,
