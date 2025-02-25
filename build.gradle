@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'org.jreleaser' version '1.16.0'
 }
 
 group = 'io.algomaster99.maven_module_graph'
