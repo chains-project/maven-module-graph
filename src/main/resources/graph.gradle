@@ -1,0 +1,56 @@
+import groovy.json.JsonOutput
+
+gradle.projectsLoaded {
+    def indentationProp = gradle.startParameter.projectProperties['indentation']
+    def indentation = (indentationProp != null) ? indentationProp.toInteger() : 2
+    def outputDirPath = gradle.startParameter.projectProperties['outputDir']
+    def outputDir = outputDirPath ? new File(outputDirPath) : new File(gradle.rootProject.buildDir, "coordinates")
+
+    gradle.rootProject.tasks.register("printCoordinates") {
+        doLast {
+            if (!outputDir.exists()) {
+                outputDir.mkdirs()
+            }
+
+            def textFile = new File(outputDir, "output.txt")
+            def jsonFile = new File(outputDir, "output.json")
+            textFile.text = ""
+            jsonFile.text = ""
+
+            def mavenStyleOutput = new StringBuilder()
+
+            def printMavenStyle
+            printMavenStyle = { Project project, int depth = 0 ->
+                def indent = " " * (depth * indentation)
+                def line = "${indent}${project.group}:${project.name}:${project.version}"
+                mavenStyleOutput.append(line).append("\n")
+                project.childProjects.values().each { child ->
+                    printMavenStyle(child, depth + 1)
+                }
+            }
+
+            printMavenStyle(gradle.rootProject)
+            textFile.text = mavenStyleOutput.toString()
+
+            def toJsonMap
+            toJsonMap = { Project project, int depth = 0 ->
+                def map = [
+                        depth     : depth,
+                        groupId   : project.group?.toString(),
+                        artifactId: project.name,
+                        version   : project.version?.toString()
+                ]
+                if (!project.childProjects.isEmpty()) {
+                    map.submodules = project.childProjects.values().collect {
+                        toJsonMap(it, depth + 1)
+                    }
+                }
+                return map
+            }
+
+            def jsonModel = toJsonMap(gradle.rootProject)
+            def jsonString = JsonOutput.prettyPrint(JsonOutput.toJson(jsonModel))
+            jsonFile.text = jsonString
+        }
+    }
+}
